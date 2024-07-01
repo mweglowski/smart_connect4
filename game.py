@@ -1,6 +1,7 @@
 import pygame
 import sys
 import numpy as np
+from utils import check_strike
 
 BLOCK_SIZE = 70
 NUM_COLUMNS = 6
@@ -74,51 +75,8 @@ class Game:
 	# Checking is any player won
 	def check_for_win(self):
 		for player_id in [1, 2]:
-			# rows (horizontal)
-			for row_index in range(NUM_ROWS):
-				for col_index_start in range(0, NUM_COLUMNS - self.coins_strike_quantity + 1):
-					strike = 0
-					for col_index in range(col_index_start, col_index_start + self.coins_strike_quantity):
-						if self.board[row_index][col_index] == player_id:
-							strike += 1
-							if strike == self.coins_strike_quantity:
-								return player_id
-   
-			# columns (vertical)
-			for col_index in range(NUM_COLUMNS):
-				for row_index_start in range(0, NUM_ROWS - self.coins_strike_quantity + 1):
-					strike = 0
-					for row_index in range(row_index_start, row_index_start + self.coins_strike_quantity):
-						if self.board[row_index][col_index] == player_id:
-							strike += 1
-							if strike == self.coins_strike_quantity:
-								return player_id
-						else:
-							break
-							
-			# diagonal
-			for row_index_start in range(0, NUM_ROWS - self.coins_strike_quantity + 1):
-				for col_index_start in range(0, NUM_COLUMNS - self.coins_strike_quantity + 1):
-					# Check diagonal starting from self.board[row_index][col_index]
-					# Negative diagonal \
-					strike = 0
-					for i in range(self.coins_strike_quantity):
-						if self.board[row_index_start + i][col_index_start + i] == player_id:
-							strike += 1
-							if strike == self.coins_strike_quantity:
-								return player_id
-						else:
-							break
-						
-					# Positive diagonal /
-					strike = 0
-					for i in range(self.coins_strike_quantity):
-						if self.board[row_index_start + i][NUM_COLUMNS - col_index_start - i - 1] == player_id:
-							strike += 1
-							if strike == self.coins_strike_quantity:
-								return player_id
-						else:
-							break
+			if check_strike(self.board, player_id, self.coins_strike_quantity):
+				return True
 		return False
    
 

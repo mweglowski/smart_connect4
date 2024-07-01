@@ -1,4 +1,5 @@
 import numpy as np
+from utils import check_strike
 
 NUM_ROWS = 7
 NUM_COLUMNS = 6
@@ -19,9 +20,29 @@ class Environment:
                 break
             
         print(self.board)
-        reward = 0
+        reward = self.get_reward()
+        self.current_player = 3 - self.current_player
         return reward
     
-    # def get_reward(self):
+    def get_reward(self):
+        # check for player 2, 3, 4 (win)
+        current_player_strike = {str(quantity): check_strike(self.board, self.current_player, quantity) for quantity in [2, 3, 4]}
+        
+        # check for opponent 2, 3
+        second_player_strike = {str(quantity): check_strike(self.board, 3 - self.current_player, quantity) for quantity in [2, 3]}
+        
+        # Check for win
+        if current_player_strike["4"]:
+            return 1000
+        
+        # Calculate rewards
+        
+        print('current_player ->', current_player_strike)
+        print('second_player ->', second_player_strike)
+        return 0
     
 env = Environment()
+env.step(1)
+env.step(2)
+env.step(1)
+env.step(1)
