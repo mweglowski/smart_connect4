@@ -1,0 +1,1 @@
+write logic to decrease reward by 1000 when there is opportunity to second_player to make move that is winning

@@ -2,6 +2,7 @@ import pygame
 import sys
 import numpy as np
 from utils import check_strike
+from agent import Agent
 
 BLOCK_SIZE = 70
 NUM_COLUMNS = 6
@@ -19,6 +20,10 @@ class Game:
 		self.running = True
 		self.board = [[0 for _ in range(NUM_COLUMNS)] for _ in range(NUM_ROWS)]
 		self.coins_strike_quantity = COIN_STRIKE_TO_WIN
+  
+		# Agent configuration
+		self.agent = Agent(np.array(self.board).shape, NUM_COLUMNS)
+		self.agent.load_model("model.pth")
 
 	# Run the game
 	def run(self):
@@ -46,8 +51,9 @@ class Game:
 						continue
 
 					# Make agent move
-					random_column = np.random.randint(0, 6)
-					self.place_coin(random_column, 2)
+					# random_column = np.random.randint(0, 6)
+					action = self.agent.choose_action(np.array(self.board).flatten())
+					self.place_coin(action, 2)
      
 
 			# After placing coin there is time to update pygame display
