@@ -41,11 +41,11 @@ class Agent:
         
     def choose_action(self, state):
         """
-        Choose action in current state.
+        Choose action in current state. The more steps agent takes the less random action it chooses, because of decaying epsilon.
         Arguments:
             state (list[int]) - flattened state (environment board)
         """
-        if np.random.rand() < 0.1: # Replace with self.epsilon
+        if np.random.rand() < self.epsilon:
             # Random action
             return np.random.randint(0, self.num_actions)
         else:
@@ -114,6 +114,9 @@ class Agent:
         # Update weights
         self.optimizer.step()
         
+        # Decrease exploration rate (epsilon)
+        if self.epsilon > self.min_epsilon:
+            self.epsilon *= self.epsilon_decay
         
     def save_model(self, path):
         """
