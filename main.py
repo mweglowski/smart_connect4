@@ -50,6 +50,12 @@ for episode in range(episodes):
         # Increase cumulative reward for this episode
         total_reward += reward
         
+        # Random action (training agent on random agent)
+        if episode < 100:
+            next_state, reward, terminal = env.step(np.random.randint(0, num_actions))
+            next_state = next_state.flatten()
+            state = next_state
+        
     print(f"Episode {episode}, Total Reward: {total_reward}")
         
 agent.save_model("model.pth")

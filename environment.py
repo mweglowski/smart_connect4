@@ -39,7 +39,7 @@ class Environment:
         
         current_player_won = check_strike(self.board, self.current_player, 4)
         if current_player_won:
-            reward += 1000
+            reward += 100
             self.terminal = True
         elif self.is_draw():
             self.terminal = True
@@ -61,15 +61,36 @@ class Environment:
         reward = 0
         # Current player
         if current_player_strike["3"]:
-            reward = 50
-        elif current_player_strike["2"]:
-            reward = 20
+            reward += 1
         
         # Second player
         if second_player_strike["3"]:
-            reward -= 100
-        elif second_player_strike["2"]:
-            reward -= 20
+            reward -= 1
+            
+        # Check if second_player can end the game, if yes decrease reward by 10000
+        print('current_player', self.current_player)
+        board_copy = np.copy(self.board)
+        for action in range(NUM_COLUMNS):
+            
+            for row_index in range(NUM_ROWS - 1, -1, -1):
+                # Check first empty space starting from the bottom
+                if board_copy[row_index][action] == 0:
+                    # Placing current player "coin" in free space
+                    board_copy[row_index][action] = 3 - self.current_player
+                    # print('placing\n',  board_copy)
+                    
+                    # Check if this move is winning
+                    if check_strike(board_copy, 3 - self.current_player, 4):
+                        print("second_player move can win!")
+                        reward -= 1000
+                        break
+                    
+                    # Remove coin from this space
+                    board_copy[row_index][action] = 0
+                    # print('removed\n', board_copy)
+                    break
+                
+        print(reward)
                 
         # print('current_player ->', current_player_strike)
         # print('second_player ->', second_player_strike)
@@ -84,11 +105,11 @@ class Environment:
 # If this file is called not from another file
 if __name__ == "__main__":
     env = Environment()
+    env.step(0)
+    env.step(5)
     env.step(1)
+    env.step(5)
     env.step(2)
-    env.step(1)
-    env.step(2)
-    env.step(1)
-    env.step(2)
-    env.step(1)
+    env.step(5)
+    env.step(3)
     print(env.board)
