@@ -12,7 +12,7 @@ agent = Agent(state_shape, num_actions)
 
 
 # Training
-episodes = 1000
+episodes = 10000
 for episode in range(episodes):
     # Get initial state of environment
     state = env.reset()

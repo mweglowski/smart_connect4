@@ -67,7 +67,7 @@ class Environment:
         if second_player_strike["3"]:
             reward -= 1
             
-        # Check if second_player can end the game, if yes decrease reward by 10000
+        # Check if second_player can end the game
         print('current_player', self.current_player)
         board_copy = np.copy(self.board)
         for action in range(NUM_COLUMNS):
