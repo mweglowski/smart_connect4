@@ -47,6 +47,7 @@ class Environment:
             self.current_player = 3 - self.current_player
         
         print('in env.py', self.board, reward, self.terminal)
+        
         return self.board, reward, self.terminal
     
     # Calculate reward
@@ -70,7 +71,11 @@ class Environment:
         # Check if second_player can end the game, if yes decrease reward by 10000
         print('current_player', self.current_player)
         board_copy = np.copy(self.board)
+        
+        can_second_player_win = False
         for action in range(NUM_COLUMNS):
+            if can_second_player_win:
+                break
             
             for row_index in range(NUM_ROWS - 1, -1, -1):
                 # Check first empty space starting from the bottom
@@ -82,14 +87,15 @@ class Environment:
                     # Check if this move is winning
                     if check_strike(board_copy, 3 - self.current_player, 4):
                         print("second_player move can win!")
-                        reward -= 1000
+                        reward -= 100
                         break
                     
                     # Remove coin from this space
                     board_copy[row_index][action] = 0
                     # print('removed\n', board_copy)
+                    can_second_player_win = True
                     break
-                
+            
         print(reward)
                 
         # print('current_player ->', current_player_strike)
@@ -112,4 +118,3 @@ if __name__ == "__main__":
     env.step(2)
     env.step(5)
     env.step(3)
-    print(env.board)
