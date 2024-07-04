@@ -1,8 +1,8 @@
 import numpy as np
 from utils import check_strike
 
-NUM_ROWS = 7
-NUM_COLUMNS = 6
+NUM_ROWS = 6
+NUM_COLUMNS = 7
 
 class Environment:
     def __init__(self):
@@ -27,6 +27,12 @@ class Environment:
     # Perform step in environment, take certain action and observe what happens
     def step(self, action):
         # action -> column_index
+        reward = 0
+
+        # Invalid move (end game)
+        if self.board[0][action] != 0:
+            reward -= 100
+            self.terminal = True
         
         for row_index in range(NUM_ROWS - 1, -1, -1):
             # Check first empty space starting from the bottom
@@ -34,19 +40,28 @@ class Environment:
                 # Placing current player "coin" in free space
                 self.board[row_index][action] = self.current_player
                 break
+
             
         reward = self.get_reward()
         
         current_player_won = check_strike(self.board, self.current_player, 4)
+        second_player_won = check_strike(self.board, 3 - self.current_player, 4)
+
+        # Victory
         if current_player_won:
             reward += 100
             self.terminal = True
+        # Defeat
+        elif second_player_won:
+            reward -= 100
+            self.terminal = True
+        # Draw
         elif self.is_draw():
             self.terminal = True
-        else:
-            self.current_player = 3 - self.current_player
+        # else:
+        #     self.current_player = 3 - self.current_player
         
-        print('in env.py', self.board, reward, self.terminal)
+        # print('in env.py', self.board, reward, self.terminal)
         
         return self.board, reward, self.terminal
     
@@ -69,38 +84,33 @@ class Environment:
             reward -= 1
             
         # Check if second_player can end the game
-        print('current_player', self.current_player)
+        # print('current_player', self.current_player)
         board_copy = np.copy(self.board)
         
-        can_second_player_win = False
-        for action in range(NUM_COLUMNS):
-            if can_second_player_win:
-                break
+        # can_second_player_win = False
+        # for action in range(NUM_COLUMNS):
+        #     if can_second_player_win:
+        #         break
             
-            for row_index in range(NUM_ROWS - 1, -1, -1):
-                # Check first empty space starting from the bottom
-                if board_copy[row_index][action] == 0:
-                    # Placing current player "coin" in free space
-                    board_copy[row_index][action] = 3 - self.current_player
-                    # print('placing\n',  board_copy)
+        #     for row_index in range(NUM_ROWS - 1, -1, -1):
+        #         # Check first empty space starting from the bottom
+        #         if board_copy[row_index][action] == 0:
+        #             # Placing current player "coin" in free space
+        #             board_copy[row_index][action] = 3 - self.current_player
+        #             # print('placing\n',  board_copy)
                     
-                    # Check if this move is winning
-                    if check_strike(board_copy, 3 - self.current_player, 4):
-                        print("second_player move can win!")
-                        reward -= 100
-                        break
+        #             # Check if this move is winning
+        #             if check_strike(board_copy, 3 - self.current_player, 4):
+        #                 # print("second_player move can win!")
+        #                 reward -= 100
+        #                 break
                     
-                    # Remove coin from this space
-                    board_copy[row_index][action] = 0
-                    # print('removed\n', board_copy)
-                    can_second_player_win = True
-                    break
+        #             # Remove coin from this space
+        #             board_copy[row_index][action] = 0
+        #             # print('removed\n', board_copy)
+        #             can_second_player_win = True
+        #             break
             
-        print(reward)
-                
-        # print('current_player ->', current_player_strike)
-        # print('second_player ->', second_player_strike)
-        # print(reward)
         return reward
     
 

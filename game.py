@@ -5,8 +5,8 @@ from utils import check_strike
 from agent import Agent
 
 BLOCK_SIZE = 70
-NUM_COLUMNS = 6
-NUM_ROWS = 7
+NUM_COLUMNS = 7
+NUM_ROWS = 6
 COIN_STRIKE_TO_WIN = 4
 SCREEN_WIDTH = BLOCK_SIZE * NUM_COLUMNS
 SCREEN_HEIGHT = BLOCK_SIZE * NUM_ROWS
@@ -44,6 +44,8 @@ class Game:
 						self.place_coin(4, 1)
 					elif event.key == pygame.K_6:
 						self.place_coin(5, 1)
+					elif event.key == pygame.K_7:
+						self.place_coin(6, 1)
 					# Quit
 					elif event.key == pygame.K_q:
 						sys.exit()
@@ -51,7 +53,7 @@ class Game:
 						continue
 
 					# Make agent move
-					# random_column = np.random.randint(0, 6)
+					# random_column = np.random.randint(0, NUM_COLUMNS)
 					action = self.agent.choose_action(np.array(self.board).flatten())
 					self.place_coin(action, 2)
      

@@ -1,6 +1,7 @@
 import numpy as np
 from agent import Agent
 from environment import Environment
+from utils import check_strike
 
 # Initializing environment and agent parameters
 env = Environment()
@@ -9,25 +10,24 @@ num_actions = env.board.shape[1]
 
 # Initializing agent
 agent = Agent(state_shape, num_actions)
+agent.load_model("model.pth")
 
-
+# Battle with random agent
 # Training
 episodes = 1000
+win_count = 0
+lose_count = 0
 for episode in range(episodes):
+    print(episode)
     # Get initial state of environment
     state = env.reset()
     
     # Flatten this state
     state = state.flatten()
     
-    # Initialize total reward
-    total_reward = 0
-    
     # Initialize terminal flag
     terminal = False
-    
-    
-    # Training loop
+
     while not terminal:
         # Agent takes an action
         env.current_player = 1
@@ -35,6 +35,10 @@ for episode in range(episodes):
         
         # Observe environment and get next_state, reward and terminal flag after agent takes action
         next_state, reward, terminal = env.step(action)
+        if check_strike(env.board, 1, 4):
+            print("win")
+            win_count += 1
+            break
         
         # Flatten state, because agents like flattened arrays
         next_state = next_state.flatten()
@@ -42,30 +46,19 @@ for episode in range(episodes):
         # Store experience in agent's experience buffer
         agent.store_experience(state, action, reward, next_state, terminal)
         
-        # Train neural network to better predict future moves
-        agent.train()
-        
         # Update state
         state = next_state
-        
-        # Increase cumulative reward for this episode
-        total_reward += reward
-        
-        # print(env.board, reward)
 
 
         env.current_player = 2
-        # Random action (training agent on random agent)
-        # if episode < 100:
-        #     action = np.random.randint(0, num_actions)
-        #     next_state, _, _ = env.step(action)
-        #     state = next_state.flatten()
-        # # Move of the second player which is also agent. Action based on agent's neural network
-        # else:
-        action = agent.choose_action(state)
-        next_state, _, _ = env.step(action)
+        action = np.random.randint(0, num_actions)
+        next_state, _, terminal = env.step(action)
         state = next_state.flatten()
-        
-    print(f"Episode {episode}, Total Reward: {total_reward}")
-        
-agent.save_model("model.pth")
+        if check_strike(env.board, 2, 4):
+            print("lose")
+            lose_count += 1
+            
+print("WIN:", win_count)
+print("LOSE:", lose_count)
+print("DRAW:", episodes - win_count - lose_count)
+print("ACCURACY:", win_count / episodes)

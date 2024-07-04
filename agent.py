@@ -133,6 +133,6 @@ class Agent:
         self.model.eval()
 
 # Testing
-agent = Agent(state_shape=np.zeros((6, 7)). shape, num_actions=6)
+agent = Agent(state_shape=np.zeros((6, 7)).shape, num_actions=7)
 
 print(agent.choose_action(np.zeros((6, 7)).flatten()))

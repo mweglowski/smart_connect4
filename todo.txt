@@ -1,1 +1,10 @@
-write logic to decrease reward by 1000 when there is opportunity to second_player to make move that is winning
+valid_moves!
+
+check agent accuracy by comparing it to random agent
+
+first 100 episodes random agent
+next minimax agent
+self-play
+
+windows instead of strikes
+give rewards for windows
